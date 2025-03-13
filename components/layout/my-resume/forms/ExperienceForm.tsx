@@ -9,6 +9,9 @@ import { addExperienceToResume } from "@/lib/actions/resume.actions";
 import { useFormContext } from "@/lib/context/FormProvider";
 import { Brain, Loader2, Minus, Plus } from "lucide-react";
 import React, { useRef, useState } from "react";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 const ExperienceForm = ({ params }: { params: { id: string } }) => {
   const listRef = useRef<HTMLDivElement>(null);
@@ -20,7 +23,10 @@ const ExperienceForm = ({ params }: { params: { id: string } }) => {
   );
   const [experienceList, setExperienceList] = useState(
     formData?.experience.length > 0
-      ? formData?.experience
+      ? formData?.experience.map((exp: any) => ({
+          ...exp,
+          responsibilities: exp.responsibilities || [""],
+        }))
       : [
           {
             title: "",
@@ -30,6 +36,7 @@ const ExperienceForm = ({ params }: { params: { id: string } }) => {
             startDate: "",
             endDate: "",
             workSummary: "",
+            responsibilities: [""],
           },
         ]
   );
@@ -52,6 +59,49 @@ const ExperienceForm = ({ params }: { params: { id: string } }) => {
     });
   };
 
+  const handleResponsibilityChange = (
+    expIndex: number,
+    respIndex: number,
+    value: string
+  ) => {
+    const newEntries = experienceList.slice();
+    newEntries[expIndex].responsibilities[respIndex] = value;
+    setExperienceList(newEntries);
+
+    handleInputChange({
+      target: {
+        name: "experience",
+        value: newEntries,
+      },
+    });
+  };
+
+  const addResponsibility = (expIndex: number) => {
+    const newEntries = experienceList.slice();
+    newEntries[expIndex].responsibilities.push("");
+    setExperienceList(newEntries);
+
+    handleInputChange({
+      target: {
+        name: "experience",
+        value: newEntries,
+      },
+    });
+  };
+
+  const removeResponsibility = (expIndex: number, respIndex: number) => {
+    const newEntries = experienceList.slice();
+    newEntries[expIndex].responsibilities.splice(respIndex, 1);
+    setExperienceList(newEntries);
+
+    handleInputChange({
+      target: {
+        name: "experience",
+        value: newEntries,
+      },
+    });
+  };
+
   const AddNewExperience = () => {
     const newEntries = [
       ...experienceList,
@@ -63,6 +113,7 @@ const ExperienceForm = ({ params }: { params: { id: string } }) => {
         startDate: "",
         endDate: "",
         workSummary: "",
+        responsibilities: [""],
       },
     ];
     setExperienceList(newEntries);
@@ -154,6 +205,9 @@ const ExperienceForm = ({ params }: { params: { id: string } }) => {
     setIsLoading(false);
   };
 
+  console.log("Form Data:", formData);
+  console.log("Experience List:", experienceList);
+
   return (
     <div>
       <div className="p-5 shadow-lg rounded-lg border-t-primary-700 border-t-4 bg-white">
@@ -190,7 +244,7 @@ const ExperienceForm = ({ params }: { params: { id: string } }) => {
                     className="no-focus"
                   />
                 </div>
-                <div className="space-y-2">
+                {/* <div className="space-y-2">
                   <label className="text-slate-700 font-semibold">City:</label>
                   <Input
                     name="city"
@@ -207,7 +261,44 @@ const ExperienceForm = ({ params }: { params: { id: string } }) => {
                     defaultValue={item?.state}
                     className="no-focus"
                   />
+                </div> */}
+                {/* <div className="space-y-2">
+                  <label className="text-slate-700 font-semibold flex items-center gap-1">
+                    Date Start - Date End
+                    <span className="text-gray-400 text-xs">(?)</span>
+                  </label>
+                  <div className="flex gap-2 items-center">
+                    <Input
+                      type="text"
+                      name="startDate"
+                      placeholder="Feb 2018"
+                      onChange={handleInputChange}
+                      className="no-focus"
+                    />
+                    <span>-</span>
+                    <Input
+                      type="text"
+                      name="endDate"
+                      placeholder="Jun 2022"
+                      onChange={handleInputChange}
+                      className="no-focus"
+                      disabled={formData?.isCurrentPosition}
+                    />
+                  </div>
+                </div> */}
+
+                <div className="space-y-2">
+                  <label className="text-slate-700 font-semibold">
+                    Location (City, State)
+                  </label>
+                  <Input
+                    name="location"
+                    placeholder="Redmond, WA"
+                    onChange={handleInputChange}
+                    className="no-focus"
+                  />
                 </div>
+
                 <div className="space-y-2">
                   <label className="text-slate-700 font-semibold">
                     Start Date:
@@ -221,46 +312,121 @@ const ExperienceForm = ({ params }: { params: { id: string } }) => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-slate-700 font-semibold">
-                    End Date:
-                  </label>
+                  <div className="flex items-center justify-between">
+                    <label className="text-slate-700 font-semibold">
+                      End Date:
+                    </label>
+                    <div className="flex items-center space-x-2">
+                      <Switch
+                        name="isCurrentPosition"
+                        id={`current-position-${index}`}
+                        onCheckedChange={(checked) =>
+                          handleChange(index, {
+                            target: {
+                              name: "isCurrentPosition",
+                              value: checked,
+                            },
+                          })
+                        }
+                      />
+                      <Label htmlFor={`current-position-${index}`}>
+                        Current Position
+                      </Label>
+                    </div>
+                  </div>
                   <Input
                     type="date"
                     name="endDate"
+                    disabled={item?.isCurrentPosition}
+                    required={!item?.isCurrentPosition}
                     onChange={(event) => handleChange(index, event)}
-                    defaultValue={item?.endDate}
                     className="no-focus"
                   />
                 </div>
                 <div className="col-span-2 space-y-2">
-                  <div className="flex justify-between items-end">
-                    <label className=" text-slate-700 font-semibold">
-                      Summary:
+                  <div className="col-span-2 space-y-2">
+                    <label className="text-slate-700 font-semibold flex items-center gap-1">
+                      Company Description
+                      <span className="text-gray-400 text-xs">(?)</span>
                     </label>
+                    <Textarea
+                      name="companyDescription"
+                      onChange={(event) => handleChange(index, event)}
+                      defaultValue={item?.companyDescription}
+                      placeholder="Microsoft, a global leader in technology and innovation, ranked #2 on the Fortune 500 in 2023, with a revenue of $198.3 billion."
+                      className="no-focus resize-none h-24"
+                    />
                     <Button
-                      variant="outline"
-                      onClick={() => {
-                        generateExperienceDescriptionFromAI(index);
-                      }}
                       type="button"
+                      variant="ghost"
                       size="sm"
-                      className="border-primary text-primary flex gap-2"
-                      disabled={isAiLoading}
+                      className="text-primary-600 p-0 h-auto text-sm"
                     >
-                      {isAiLoading && currentAiIndex === index ? (
-                        <Loader2 size={16} className="animate-spin" />
-                      ) : (
-                        <Brain className="h-4 w-4" />
-                      )}{" "}
-                      Generate from AI
+                      <Brain className="h-4 w-4 mr-1" /> AI Suggestions
                     </Button>
                   </div>
-                  <RichTextEditor
-                    defaultValue={item?.workSummary || ""}
-                    onRichTextEditorChange={(value: string) =>
-                      handleChange(index, value)
-                    }
-                  />
+                  <div className="col-span-2 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <label className="text-slate-700 font-semibold flex items-center gap-1">
+                        Responsibilities/Achievements
+                        <span className="text-gray-400 text-xs">(?)</span>
+                      </label>
+                    </div>
+                    {item.responsibilities.map(
+                      (resp: string, respIndex: number) => (
+                        <div key={respIndex} className="space-y-2">
+                          <div className="flex gap-2">
+                            <Textarea
+                              value={resp}
+                              onChange={(e) =>
+                                handleResponsibilityChange(
+                                  index,
+                                  respIndex,
+                                  e.target.value
+                                )
+                              }
+                              placeholder="Led the end-to-end product development lifecycle, from concept through launch, ensuring alignment with market needs and strategic goals."
+                              className="no-focus resize-none h-24"
+                            />
+                            <div className="flex flex-col gap-1">
+                              {item.responsibilities.length > 1 && (
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  className="text-primary-600 p-2 h-auto"
+                                  onClick={() =>
+                                    removeResponsibility(index, respIndex)
+                                  }
+                                >
+                                  <Minus className="h-4 w-4" />
+                                </Button>
+                              )}
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                className="text-primary-600 p-2 h-auto"
+                              >
+                                <Brain className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                          {respIndex === item.responsibilities.length - 1 && (
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              className="text-primary-600 p-2 h-auto flex items-center gap-1"
+                              onClick={() => addResponsibility(index)}
+                            >
+                              <Plus className="h-4 w-4" /> Add a bullet point
+                            </Button>
+                          )}
+                        </div>
+                      )
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

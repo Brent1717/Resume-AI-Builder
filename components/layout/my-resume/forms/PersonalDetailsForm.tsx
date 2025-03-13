@@ -25,6 +25,8 @@ const PersonalDetailsForm = ({ params }: { params: { id: string } }) => {
       address: formData?.address,
       phone: formData?.phone,
       email: formData?.email,
+      portfolioLink: formData?.portfolioLink,
+      githubLink: formData?.githubLink,
     };
 
     const result = await updateResume({
@@ -85,7 +87,7 @@ const PersonalDetailsForm = ({ params }: { params: { id: string } }) => {
               className="no-focus"
             />
           </div>
-          <div className="col-span-2 space-y-2">
+          {/* <div className="col-span-2 space-y-2">
             <label className="mt-2 text-slate-700 font-semibold">
               Job Title:
             </label>
@@ -96,7 +98,7 @@ const PersonalDetailsForm = ({ params }: { params: { id: string } }) => {
               defaultValue={formData?.jobTitle}
               className="no-focus"
             />
-          </div>
+          </div> */}
           <div className="col-span-2 space-y-2">
             <label className="mt-2 text-slate-700 font-semibold">
               Address:
@@ -128,6 +130,32 @@ const PersonalDetailsForm = ({ params }: { params: { id: string } }) => {
               onChange={handleInputChange}
               className="no-focus"
             />
+          </div>
+          <div className="col-span-2 grid grid-cols-2 gap-3">
+            <div className="space-y-2">
+              <label className="mt-2 text-slate-700 font-semibold">
+                Portfolio Link:
+              </label>
+              <Input
+                name="portfolioLink"
+                defaultValue={formData?.portfolioLink}
+                onChange={handleInputChange}
+                className="no-focus"
+                placeholder="https://portfolio.com"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="mt-2 text-slate-700 font-semibold">
+                GitHub Link:
+              </label>
+              <Input
+                name="githubLink"
+                defaultValue={formData?.githubLink}
+                onChange={handleInputChange}
+                className="no-focus"
+                placeholder="https://github.com/username"
+              />
+            </div>
           </div>
         </div>
         <div className="mt-5 flex justify-end">

@@ -5,6 +5,8 @@ import SkillsPreview from "./previews/SkillsPreview";
 import SummaryPreview from "./previews/SummaryPreview";
 import ExperiencePreview from "./previews/ExperiencePreview";
 import EducationalPreview from "./previews/EducationalPreview";
+import CertificationsPreview from "./previews/CertificationsPreview";
+import InterestsPreview from "./previews/InterestsPreview";
 import { themeColors } from "@/lib/utils";
 
 const ResumePreview = () => {
@@ -20,17 +22,16 @@ const ResumePreview = () => {
 
   return (
     <div className="flex items-center justify-center">
-      <div
-        className="shadow-lg p-14 border-t-[20px] bg-white w-[210mm] min-h-[297mm] print:shadow-none"
-        style={{
-          borderColor: formData?.themeColor || themeColors[0],
-        }}
-      >
-        <PersonalDetailsPreview />
-        <SummaryPreview />
-        {formData?.experience?.length > 0 && <ExperiencePreview />}
-        {formData?.education?.length > 0 && <EducationalPreview />}
-        {formData?.skills?.length > 0 && <SkillsPreview />}
+      <div className="shadow-lg p-8 bg-white w-[215.9mm] min-h-[279.4mm] print:shadow-none">
+        <div className="max-w-[95%] mx-auto">
+          <PersonalDetailsPreview />
+          {formData?.summary && <SummaryPreview />}
+          {formData?.experience?.length > 0 && <ExperiencePreview />}
+          {formData?.education?.length > 0 && <EducationalPreview />}
+          {formData?.certifications?.length > 0 && <CertificationsPreview />}
+          {formData?.skills?.length > 0 && <SkillsPreview />}
+          {formData?.interests?.length > 0 && <InterestsPreview />}
+        </div>
       </div>
     </div>
   );

@@ -2,61 +2,47 @@ import { useFormContext } from "@/lib/context/FormProvider";
 import { themeColors } from "@/lib/utils";
 import React from "react";
 
-function PersonalDetailsPreview() {
+const PersonalDetailsPreview = () => {
   const { formData } = useFormContext();
-  
+
   return (
     <div>
-      <h2
-        className="font-bold text-xl text-center"
-        style={{
-          color: formData?.themeColor || themeColors[0],
-        }}
-      >
+      <h1 className="text-2xl font-bold">
         {formData?.firstName} {formData?.lastName}
-      </h2>
-
-      <h2 className="text-center text-sm font-medium">
-        {formData?.jobTitle}
-      </h2>
-
-      <h2
-        className="text-center font-normal text-xs"
-        style={{
-          color: formData?.themeColor || themeColors[0],
-        }}
-      >
-        {formData?.address}
-      </h2>
-
-      <div className="flex justify-between">
-        <h2
-          className="font-normal text-xs"
-          style={{
-            color: formData?.themeColor || themeColors[0],
-          }}
-        >
-          {formData?.phone}
-        </h2>
-
-        <h2
-          className="font-normal text-xs"
-          style={{
-            color: formData?.themeColor || themeColors[0],
-          }}
-        >
-          {formData?.email}
-        </h2>
+      </h1>
+      <div className="text-sm text-gray-600 mt-1 flex flex-wrap gap-2 pb-2 border-b">
+        {formData?.email && <span>{formData.email}</span>}
+        {formData?.phone && <span>• {formData.phone}</span>}
+        {formData?.address && <span>• {formData.address}</span>}
+        {formData?.portfolioLink && (
+          <span>
+            •{" "}
+            <a
+              href={formData.portfolioLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:underline"
+            >
+              Portfolio
+            </a>
+          </span>
+        )}
+        {formData?.githubLink && (
+          <span>
+            •{" "}
+            <a
+              href={formData.githubLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:underline"
+            >
+              GitHub
+            </a>
+          </span>
+        )}
       </div>
-      
-      <hr
-        className="border-[1.5px] my-2 mb-5"
-        style={{
-          borderColor: formData?.themeColor || themeColors[0],
-        }}
-      />
     </div>
   );
-}
+};
 
 export default PersonalDetailsPreview;
